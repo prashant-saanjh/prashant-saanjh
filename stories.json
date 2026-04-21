@@ -1,0 +1,53 @@
+{
+  "stories": [
+    {
+      "id": "s1",
+      "date": "2026-04-21",
+      "title": "The Fisherman Who Collected Silences",
+      "body": "<p>He kept them in old tobacco tins — the silence before rain, the silence after an argument, the silence of a room when the last elder has left it forever. He said each one had a different weight.</p><p>The one he prized most was the silence of the pond at four in the morning, when even the frogs had given up their chorus and the fish hung suspended, neither asleep nor awake, waiting for something they could not name. He had waded in one October morning and stood very still for forty minutes, then carried it home in a tin that once held cardamom tea.</p><p>His wife thought he was going mad. His daughter thought he was building something. Neither was wrong.</p><p>When he died, they found sixty-three tins arranged on a shelf above his sleeping mat. They opened each one, one by one, in the days after the cremation. Some held nothing they could feel. Some made the room go very still. One made his youngest grandson suddenly, violently, unexpectedly cry — though the boy was only three and could not have known what loss was yet.</p><p>They buried the tins with him. It seemed only right. The silences were his. He had caught them fairly.</p>",
+      "likes": 24,
+      "comments": [
+        {"a": "Meera R.", "t": "The grandson crying broke something in me."},
+        {"a": "Anonymous", "t": "I keep thinking about which silence I would collect."},
+        {"a": "Tarun D.", "t": "This reads like something from a dream I almost remembered."}
+      ],
+      "image": "",
+      "scheduledDate": "",
+      "status": "published"
+    },
+    {
+      "id": "s2",
+      "date": "2026-04-20",
+      "title": "Grandmother's Map of Rain",
+      "body": "<p>She never needed a forecast. She read the sky the way others read letters — not for information, but to feel the weight of what was coming.</p><p>Tuesday clouds meant a light rain, the kind that made the mustard fields smell like green and copper. Thursday clouds meant a storm that would tear the tarpaulin from the shed roof and keep everyone indoors with tea and old arguments. Sunday clouds, she said, never rained. They just thought about it.</p><p>We laughed. Then we stopped laughing. Then we started writing things down.</p><p>She is ninety-one now and lives with the window facing east so she can read the morning sky before she has done anything else. Some mornings she shakes her head slowly. Some mornings she calls us all for breakfast before we have woken up.</p><p>We still keep umbrellas by the door. But we also keep her tea ready and her window clear.</p>",
+      "likes": 18,
+      "comments": [
+        {"a": "Priya S.", "t": "My grandmother was the same with the wind."}
+      ],
+      "image": "",
+      "scheduledDate": "",
+      "status": "published"
+    },
+    {
+      "id": "s3",
+      "date": "2026-04-19",
+      "title": "The Market That Only Opens at Dusk",
+      "body": "<p>They sold things you didn't know you'd lost — a Tuesday afternoon from childhood, the smell of your first home, the exact blue of an old shirt your mother wore when she was younger than you are now.</p><p>The vendors never called out. You had to walk slowly, unhurried, hands loose at your sides, and the things you had lost would find you themselves, tugging at the hem of your attention like a small child who does not yet have words.</p><p>You could not pay in money. You left something instead — a worry you had been carrying too long, a grudge that had outlived its usefulness, a version of yourself you no longer needed. The vendors placed these in jars and labeled them carefully. Someone else's grief for losing their father became, on another shelf, a medicine for someone who had never known how to mourn.</p><p>The market closes at full dark. By then, most people have found what they came for, though not always what they expected. The walk home is usually quiet. Sometimes weeping. Sometimes, for no reason anyone can explain, laughter.</p>",
+      "likes": 31,
+      "comments": [
+        {"a": "Ananya M.", "t": "I want to visit this market so much it hurts."},
+        {"a": "K. Bose", "t": "You've described grief and healing in the same breath."},
+        {"a": "Anonymous", "t": "What would I leave in exchange? I've been thinking about that for hours."}
+      ],
+      "image": "",
+      "scheduledDate": "",
+      "status": "published"
+    }
+  ],
+  "songs": [
+    {"id": "g1", "title": "The Train That Left at Dusk", "desc": "A ballad of departures — platforms, steam, and the faces that blur as the train pulls away. Every goodbye carries a different weight.", "tag": "Departure"},
+    {"id": "g2", "title": "Dust and the Open Window", "desc": "A traveller's hymn to the road — red dust, passing fields, and the particular joy of not yet arriving anywhere.", "tag": "Wandering"},
+    {"id": "g3", "title": "She Sings to the Pond", "desc": "Inspired by the blue bird on the wire — the song no one asked for, sung for the fish and the sky and no one in particular.", "tag": "Stillness"},
+    {"id": "g4", "title": "Old Highway, New Rain", "desc": "The smell of wet asphalt. A highway that remembers everyone who ever crossed it. A song about roads that outlive the people who built them.", "tag": "Memory"}
+  ]
+}

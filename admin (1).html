@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saanjh — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090604;--pond:#0d1910;--rust:#a33d18;--marigold:#d4751e;--gold:#e8b84b;--gold2:#f5d070;--ivory:#f7eed8;--text:#f0e2c4;--text2:#d8c89a;--muted:#9a8a68;--border:rgba(232,184,75,0.2);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Pro',serif;font-size:17px;line-height:1.7;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Ccircle cx='160' cy='160' r='154' fill='none' stroke='%23c97b2a' stroke-width='1.2' stroke-dasharray='6 10' opacity='0.07'/%3E%3C/svg%3E");background-size:320px 320px;}
+.band{height:5px;position:relative;z-index:20;background:repeating-linear-gradient(90deg,#8b1a0a 0,#8b1a0a 14px,#c97b2a 14px,#c97b2a 28px,#e8b84b 28px,#e8b84b 42px,#2d5c2a 42px,#2d5c2a 56px,#1a3a6e 56px,#1a3a6e 70px,#8b1a0a 70px);}
+
+/* SETUP */
+#setup-screen{position:fixed;inset:0;z-index:2000;display:none;align-items:flex-start;justify-content:center;background:var(--bg);overflow-y:auto;padding:40px 20px;}
+.setup-box{max-width:520px;width:100%;border:1px solid var(--border);padding:52px 44px;background:linear-gradient(145deg,rgba(50,38,20,0.5),rgba(9,6,4,0.9));position:relative;margin:auto;}
+.setup-box::before,.login-box::before,.form-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rust),var(--marigold),var(--gold));}
+.setup-logo,.login-logo{font-family:'Playfair Display',serif;font-size:36px;font-style:italic;font-weight:700;color:var(--gold);text-shadow:0 0 30px rgba(232,184,75,0.4);margin-bottom:4px;}
+.setup-sub,.login-sub{font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:var(--muted);margin-bottom:32px;}
+.setup-step{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--marigold);font-weight:700;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.slabel{font-size:10px;letter-spacing:0.38em;text-transform:uppercase;color:var(--muted);font-weight:700;display:block;margin-bottom:8px;margin-top:4px;}
+.sinput{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);font-family:'Crimson Pro',serif;font-size:16px;padding:12px 16px;margin-bottom:18px;outline:none;transition:border-color .3s;}
+.sinput:focus{border-color:rgba(232,184,75,0.5);}
+.sbtn,.login-btn,.btn-primary{background:linear-gradient(135deg,var(--rust),var(--marigold));border:none;color:var(--ivory);font-family:'Playfair Display',serif;font-size:13px;letter-spacing:0.22em;text-transform:uppercase;font-weight:700;padding:14px 28px;cursor:pointer;transition:opacity .3s;}
+.sbtn{width:100%;margin-top:6px;}.login-btn{width:100%;padding:15px;}
+.sbtn:hover,.login-btn:hover,.btn-primary:hover{opacity:0.88;}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+.serr,.login-err{color:#e07070;font-size:13px;margin-top:12px;min-height:18px;font-style:italic;}
+.shint{font-size:13px;color:var(--muted);font-style:italic;margin-top:16px;line-height:1.65;}
+.shint a{color:var(--gold);text-decoration:none;}.shint a:hover{text-decoration:underline;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;background:var(--bg);}
+.login-box{text-align:center;max-width:380px;width:90%;border:1px solid var(--border);padding:56px 44px;background:linear-gradient(145deg,rgba(50,38,20,0.5),rgba(9,6,4,0.8));position:relative;}
+.login-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);font-family:'Crimson Pro',serif;font-size:17px;padding:14px 18px;margin-bottom:16px;outline:none;transition:border-color .3s;}
+.login-input:focus{border-color:rgba(232,184,75,0.55);}
+
+/* APP */
+#app{display:none;min-height:100vh;position:relative;z-index:10;}
+.top-bar{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 40px;height:62px;background:rgba(9,6,4,0.97);border-bottom:1px solid var(--border);}
+.top-logo{font-family:'Playfair Display',serif;font-size:20px;font-style:italic;font-weight:700;color:var(--gold);}
+.top-logo span{font-size:11px;letter-spacing:0.35em;text-transform:uppercase;color:var(--muted);font-style:normal;font-family:'Crimson Pro',serif;margin-left:14px;font-weight:400;}
+.top-actions{display:flex;align-items:center;gap:16px;}
+.view-site-btn{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text2);text-decoration:none;font-weight:700;padding:8px 18px;border:1px solid var(--border);transition:color .3s,border-color .3s;}
+.view-site-btn:hover{color:var(--gold);border-color:rgba(232,184,75,0.5);}
+.logout-btn{background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;letter-spacing:0.2em;text-transform:uppercase;font-family:'Crimson Pro',serif;}
+.logout-btn:hover{color:var(--text2);}
+.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 40px;background:rgba(9,6,4,0.6);}
+.tab{font-size:11px;letter-spacing:0.34em;text-transform:uppercase;font-weight:700;color:var(--muted);padding:16px 24px;cursor:pointer;border-bottom:2px solid transparent;transition:color .3s,border-color .3s;margin-bottom:-1px;}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab:hover:not(.active){color:var(--text2);}
+.panel{display:none;padding:48px 40px;max-width:1200px;margin:0 auto;}
+.panel.active{display:block;}
+.panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;}
+.panel-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--ivory);}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--text2);font-family:'Crimson Pro',serif;font-size:12px;letter-spacing:0.22em;text-transform:uppercase;font-weight:700;padding:10px 22px;cursor:pointer;transition:all .3s;}
+.btn-ghost:hover{border-color:rgba(232,184,75,0.5);color:var(--gold);}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:48px;}
+.stat-card{padding:36px 32px;background:linear-gradient(145deg,rgba(50,38,20,0.45),rgba(9,6,4,0.65));border:1px solid var(--border);text-align:center;}
+.stat-num{font-family:'Playfair Display',serif;font-size:52px;font-weight:900;color:var(--gold);line-height:1;}
+.stat-label{font-size:11px;letter-spacing:0.38em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:10px;}
+
+/* LISTS */
+.story-list{display:flex;flex-direction:column;gap:2px;}
+.story-row{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;gap:20px;padding:20px 28px;background:linear-gradient(145deg,rgba(50,38,20,0.4),rgba(9,6,4,0.6));border:1px solid var(--border);transition:background .3s;}
+.story-row:hover{background:linear-gradient(145deg,rgba(58,44,22,0.6),rgba(13,25,16,0.5));}
+.story-row-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--ivory);font-weight:700;}
+.story-row-date{font-size:12px;color:var(--muted);margin-top:4px;letter-spacing:0.1em;}
+.badge{font-size:9px;letter-spacing:0.32em;text-transform:uppercase;font-weight:700;padding:4px 12px;}
+.badge-pub{background:rgba(45,122,79,0.25);color:#5dba8a;border:1px solid rgba(45,122,79,0.4);}
+.badge-draft{background:rgba(163,61,24,0.2);color:var(--marigold);border:1px solid rgba(163,61,24,0.4);}
+.badge-sched{background:rgba(26,58,110,0.3);color:#7aaae0;border:1px solid rgba(26,58,110,0.5);}
+.row-actions{display:flex;gap:10px;}
+.icon-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:6px;font-size:16px;transition:color .3s;}
+.icon-btn:hover{color:var(--gold);}.icon-btn.del:hover{color:#e07070;}
+.song-row{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:20px;padding:18px 28px;background:linear-gradient(145deg,rgba(50,38,20,0.4),rgba(9,6,4,0.6));border:1px solid var(--border);margin-bottom:2px;transition:background .3s;}
+.song-row:hover{background:linear-gradient(145deg,rgba(58,44,22,0.6),rgba(13,25,16,0.5));}
+.song-num-badge{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--rust);opacity:.5;}
+.song-row-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--ivory);}
+.song-row-tag{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--marigold);font-weight:700;margin-top:3px;}
+
+/* FORM */
+.form-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(9,6,4,0.92);overflow-y:auto;padding:40px 20px;}
+.form-overlay.open{display:flex;align-items:flex-start;justify-content:center;}
+.form-box{width:100%;max-width:780px;background:linear-gradient(145deg,rgba(30,22,10,0.98),rgba(9,6,4,0.99));border:1px solid var(--border);padding:52px 52px 44px;position:relative;}
+.form-title{font-family:'Playfair Display',serif;font-size:26px;font-style:italic;color:var(--ivory);margin-bottom:36px;}
+.form-close{position:absolute;top:20px;right:24px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1;transition:color .3s;}
+.form-close:hover{color:var(--gold);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.form-group{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;}
+.form-group.full{grid-column:1/-1;}
+label{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+.finput,.fselect,.ftextarea{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text);font-family:'Crimson Pro',serif;font-size:16px;padding:12px 16px;outline:none;transition:border-color .3s;width:100%;}
+.finput:focus,.fselect:focus,.ftextarea:focus{border-color:rgba(232,184,75,0.5);}
+.ftextarea{resize:vertical;min-height:280px;line-height:1.8;}
+.fselect{cursor:pointer;}.fselect option{background:#1a1208;color:var(--text);}
+.img-preview{width:100%;height:160px;object-fit:cover;display:none;margin-top:10px;border:1px solid var(--border);}
+.img-preview.show{display:block;}
+.form-actions{display:flex;gap:14px;justify-content:flex-end;margin-top:10px;padding-top:28px;border-top:1px solid var(--border);}
+.song-form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+
+/* SAVING BAR */
+.saving-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:9999;height:3px;background:linear-gradient(90deg,var(--rust),var(--gold));animation:slide 1.2s ease-in-out infinite;}
+@keyframes slide{0%{transform:scaleX(0);transform-origin:left;}50%{transform:scaleX(1);transform-origin:left;}51%{transform-origin:right;}100%{transform:scaleX(0);transform-origin:right;}}
+.saving-bar.show{display:block;}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1208;border:1px solid rgba(232,184,75,0.38);color:var(--ivory);padding:12px 30px;font-size:13px;letter-spacing:.2em;z-index:999;transition:transform .4s ease;font-weight:700;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.error{border-color:rgba(192,57,43,.6);color:#e07070;}
+.empty{text-align:center;padding:80px 0;color:var(--muted);font-style:italic;font-size:18px;}
+
+@media(max-width:700px){
+  .top-bar,.tabs{padding:0 18px;}.panel{padding:32px 18px;}.form-box{padding:36px 22px;}
+  .form-grid,.song-form-row{grid-template-columns:1fr;}.story-row{grid-template-columns:1fr auto;gap:10px;}
+  .stats-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="band"></div>
+<div class="saving-bar" id="saving-bar"></div>
+
+<!-- SETUP -->
+<div id="setup-screen">
+  <div class="setup-box">
+    <div class="setup-logo">Saanjh</div>
+    <div class="setup-sub">First-time setup</div>
+    <div class="setup-step">Connect to GitHub — do this once</div>
+    <label class="slabel">GitHub Username</label>
+    <input class="sinput" id="su-user" placeholder="e.g. prashant123" autocomplete="off">
+    <label class="slabel">Repository Name</label>
+    <input class="sinput" id="su-repo" placeholder="e.g. saanjh-site" autocomplete="off">
+    <label class="slabel">GitHub Personal Access Token</label>
+    <input class="sinput" id="su-token" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+    <label class="slabel">Admin Password (choose one for this panel)</label>
+    <input class="sinput" id="su-pw" type="password" placeholder="Choose a password">
+    <button class="sbtn" onclick="doSetup()">Save &amp; Connect</button>
+    <div class="serr" id="setup-err"></div>
+    <div class="shint">
+      Need a token? <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a> →
+      tick <strong>repo</strong> scope → Generate → copy &amp; paste above.<br><br>
+      Your token is stored only in <em>this browser</em> and never sent anywhere except GitHub.
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Saanjh</div>
+    <div class="login-sub">Admin · Enter the keeper's door</div>
+    <input class="login-input" type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Enter</button>
+    <div class="login-err" id="login-err"></div>
+    <div style="margin-top:22px;">
+      <button onclick="showSetup()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;letter-spacing:.2em;text-transform:uppercase;font-family:'Crimson Pro',serif;">Change GitHub settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="top-bar">
+    <div class="top-logo">Saanjh <span>CMS</span></div>
+    <div class="top-actions">
+      <a href="index.html" class="view-site-btn" target="_blank">View Site ↗</a>
+      <button class="logout-btn" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('dashboard')">Dashboard</div>
+    <div class="tab" onclick="switchTab('stories')">Stories</div>
+    <div class="tab" onclick="switchTab('songs')">Songs of the Road</div>
+  </div>
+
+  <div class="panel active" id="tab-dashboard">
+    <div class="panel-header">
+      <div class="panel-title">Good dusk, Prashant.</div>
+      <button class="btn-primary" onclick="switchTab('stories');openStoryForm()">+ New Story</button>
+    </div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div style="font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:20px;">Recent Stories</div>
+    <div class="story-list" id="recent-list"></div>
+  </div>
+
+  <div class="panel" id="tab-stories">
+    <div class="panel-header">
+      <div class="panel-title">All Stories</div>
+      <button class="btn-primary" onclick="openStoryForm()">+ New Story</button>
+    </div>
+    <div class="story-list" id="all-stories-list"></div>
+  </div>
+
+  <div class="panel" id="tab-songs">
+    <div class="panel-header">
+      <div class="panel-title">Songs of the Road</div>
+      <button class="btn-primary" onclick="openSongForm()">+ Add Song</button>
+    </div>
+    <div id="songs-list"></div>
+  </div>
+</div>
+
+<!-- STORY FORM -->
+<div class="form-overlay" id="story-form-overlay">
+  <div class="form-box">
+    <button class="form-close" onclick="closeStoryForm()">✕</button>
+    <div class="form-title" id="story-form-title">New Story</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-grid">
+      <div class="form-group full"><label>Title</label><input class="finput" id="f-title" placeholder="The story's name…"></div>
+      <div class="form-group"><label>Date</label><input class="finput" type="date" id="f-date"></div>
+      <div class="form-group"><label>Status</label>
+        <select class="fselect" id="f-status" onchange="toggleSchedField()">
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+          <option value="scheduled">Scheduled</option>
+        </select>
+      </div>
+      <div class="form-group full" id="sched-group" style="display:none;"><label>Publish On (date &amp; time)</label><input class="finput" type="datetime-local" id="f-scheduled"></div>
+      <div class="form-group full"><label>Body — plain paragraphs or &lt;p&gt; tags</label><textarea class="ftextarea" id="f-body" placeholder="Begin the story here…&#10;&#10;Separate paragraphs with a blank line."></textarea></div>
+      <div class="form-group full"><label>Cover Image (optional)</label>
+        <input class="finput" type="file" id="f-image" accept="image/*" onchange="previewImage(this)">
+        <img class="img-preview" id="img-preview" src="" alt="">
+        <input type="hidden" id="f-image-data">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-ghost" onclick="closeStoryForm()">Cancel</button>
+      <button class="btn-primary" id="save-story-btn" onclick="saveStory()">Save to GitHub</button>
+    </div>
+  </div>
+</div>
+
+<!-- SONG FORM -->
+<div class="form-overlay" id="song-form-overlay">
+  <div class="form-box">
+    <button class="form-close" onclick="closeSongForm()">✕</button>
+    <div class="form-title" id="song-form-title">New Song</div>
+    <input type="hidden" id="edit-song-id">
+    <div class="song-form-row">
+      <div class="form-group"><label>Title</label><input class="finput" id="g-title" placeholder="Song title…"></div>
+      <div class="form-group"><label>Tag / Theme</label><input class="finput" id="g-tag" placeholder="e.g. Departure, Memory…"></div>
+    </div>
+    <div class="form-group"><label>Description</label><textarea class="ftextarea" id="g-desc" style="min-height:120px;" placeholder="A short description…"></textarea></div>
+    <div class="form-actions">
+      <button class="btn-ghost" onclick="closeSongForm()">Cancel</button>
+      <button class="btn-primary" id="save-song-btn" onclick="saveSong()">Save to GitHub</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ CONFIG ════════════════════════════════════════════════
+function getCfg(){ try{return JSON.parse(localStorage.getItem('saanjh_cfg')||'{}');}catch(e){return{};} }
+function saveCfg(c){ localStorage.setItem('saanjh_cfg',JSON.stringify(c)); }
+const DATA_FILE='stories.json';
+
+// ══ GITHUB API ════════════════════════════════════════════
+function ghHeaders(token){ return {'Authorization':'token '+token,'Content-Type':'application/json','Accept':'application/vnd.github.v3+json'}; }
+
+async function ghGetFile(cfg){
+  const res=await fetch(`https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${DATA_FILE}`,{headers:ghHeaders(cfg.token)});
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||'GitHub read failed ('+res.status+')');}
+  return res.json();
+}
+async function ghPutFile(cfg,content,sha,message){
+  const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(content,null,2))));
+  const res=await fetch(`https://api.github.com/repos/${cfg.user}/${cfg.repo}/contents/${DATA_FILE}`,
+    {method:'PUT',headers:ghHeaders(cfg.token),body:JSON.stringify({message,content:encoded,sha})});
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.message||'GitHub save failed ('+res.status+')');}
+  return res.json();
+}
+async function loadFromGH(){
+  const file=await ghGetFile(getCfg());
+  const data=JSON.parse(decodeURIComponent(escape(atob(file.content))));
+  return {data,sha:file.sha};
+}
+async function saveToGH(data,sha,msg){ return ghPutFile(getCfg(),data,sha,msg); }
+
+// ══ STATE ═════════════════════════════════════════════════
+let DB=null, DB_SHA='';
+
+// ══ SETUP ═════════════════════════════════════════════════
+function showSetup(){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('setup-screen').style.display='flex';
+  const c=getCfg();
+  if(c.user)document.getElementById('su-user').value=c.user;
+  if(c.repo)document.getElementById('su-repo').value=c.repo;
+}
+async function doSetup(){
+  const user=document.getElementById('su-user').value.trim();
+  const repo=document.getElementById('su-repo').value.trim();
+  const token=document.getElementById('su-token').value.trim();
+  const pw=document.getElementById('su-pw').value.trim();
+  const err=document.getElementById('setup-err');
+  err.textContent='';
+  if(!user||!repo||!token||!pw){err.textContent='Please fill in all fields.';return;}
+  err.textContent='Testing connection…';
+  try{
+    const res=await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${DATA_FILE}`,{headers:ghHeaders(token)});
+    if(res.status===404){err.textContent='stories.json not found in that repo. Make sure you uploaded it first.';return;}
+    if(res.status===401){err.textContent='Token rejected. Make sure it has "repo" scope.';return;}
+    if(!res.ok){err.textContent='GitHub error '+res.status+'. Check your username and repo name.';return;}
+  }catch(e){err.textContent='Network error. Check your internet connection.';return;}
+  saveCfg({user,repo,token,pw});
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  err.textContent='';
+  showToast('All set! Now log in.');
+}
+
+// ══ AUTH ══════════════════════════════════════════════════
+async function doLogin(){
+  const pw=document.getElementById('pw-input').value;
+  const cfg=getCfg();
+  const err=document.getElementById('login-err');
+  if(pw!==cfg.pw){err.textContent='Incorrect password.';document.getElementById('pw-input').value='';return;}
+  sessionStorage.setItem('saanjh_admin','1');
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='block';
+  err.textContent='';
+  await initApp();
+}
+function doLogout(){sessionStorage.removeItem('saanjh_admin');location.reload();}
+
+// ══ INIT ══════════════════════════════════════════════════
+async function initApp(){
+  setSaving(true);
+  try{const {data,sha}=await loadFromGH();DB=data;DB_SHA=sha;}
+  catch(e){showToast('Could not load from GitHub: '+e.message,true);DB={stories:[],songs:[]};}
+  setSaving(false);
+  renderAll();
+}
+function renderAll(){renderDashboard();}
+function setSaving(on){document.getElementById('saving-bar').classList.toggle('show',on);}
+
+// ══ TABS ══════════════════════════════════════════════════
+function switchTab(name){
+  const names=['dashboard','stories','songs'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='dashboard')renderDashboard();
+  if(name==='stories')renderStoriesList();
+  if(name==='songs')renderSongsList();
+}
+
+// ══ DASHBOARD ═════════════════════════════════════════════
+function renderDashboard(){
+  if(!DB)return;
+  const pub=DB.stories.filter(s=>s.status==='published').length;
+  const draft=DB.stories.filter(s=>s.status==='draft').length;
+  const likes=DB.stories.reduce((a,s)=>a+s.likes,0);
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${pub}</div><div class="stat-label">Published</div></div>
+    <div class="stat-card"><div class="stat-num">${draft}</div><div class="stat-label">Drafts</div></div>
+    <div class="stat-card"><div class="stat-num">${likes}</div><div class="stat-label">Total Likes</div></div>`;
+  const recent=[...DB.stories].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,3);
+  document.getElementById('recent-list').innerHTML=recent.length?recent.map(storyRowHTML).join(''):'<div class="empty">No stories yet.</div>';
+}
+
+// ══ STORIES LIST ══════════════════════════════════════════
+function renderStoriesList(){
+  if(!DB)return;
+  const sorted=[...DB.stories].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('all-stories-list').innerHTML=sorted.length?sorted.map(storyRowHTML).join(''):'<div class="empty">No stories yet. Add your first one!</div>';
+}
+function storyRowHTML(s){
+  const bc=s.status==='published'?'badge-pub':s.status==='scheduled'?'badge-sched':'badge-draft';
+  const bl=s.status==='published'?'Published':s.status==='scheduled'?'Scheduled':'Draft';
+  return `<div class="story-row"><div><div class="story-row-title">${s.title}</div><div class="story-row-date">${fmtDate(s.date)} · ${s.likes} likes · ${s.comments.length} comments</div></div>
+  <span class="badge ${bc}">${bl}</span><div class="row-actions"><button class="icon-btn" onclick="editStory('${s.id}')">✏️</button><button class="icon-btn del" onclick="deleteStory('${s.id}')">🗑</button></div></div>`;
+}
+function fmtDate(d){if(!d)return'';return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});}
+
+// ══ STORY FORM ════════════════════════════════════════════
+function openStoryForm(id){
+  document.getElementById('story-form-title').textContent=id?'Edit Story':'New Story';
+  document.getElementById('edit-id').value=id||'';
+  document.getElementById('f-status').value='published';
+  document.getElementById('sched-group').style.display='none';
+  document.getElementById('img-preview').className='img-preview';
+  document.getElementById('f-image-data').value='';
+  if(id){
+    const s=DB.stories.find(x=>x.id===id);
+    if(s){
+      document.getElementById('f-title').value=s.title;
+      document.getElementById('f-date').value=s.date;
+      document.getElementById('f-status').value=s.status;
+      document.getElementById('f-body').value=s.body;
+      document.getElementById('f-scheduled').value=s.scheduledDate||'';
+      if(s.status==='scheduled')document.getElementById('sched-group').style.display='';
+      if(s.image){document.getElementById('f-image-data').value=s.image;document.getElementById('img-preview').src=s.image;document.getElementById('img-preview').className='img-preview show';}
+    }
+  }else{
+    document.getElementById('f-title').value='';
+    document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
+    document.getElementById('f-body').value='';
+    document.getElementById('f-scheduled').value='';
+  }
+  document.getElementById('story-form-overlay').classList.add('open');
+}
+function closeStoryForm(){document.getElementById('story-form-overlay').classList.remove('open');}
+function editStory(id){switchTab('stories');openStoryForm(id);}
+function toggleSchedField(){document.getElementById('sched-group').style.display=document.getElementById('f-status').value==='scheduled'?'':'none';}
+
+async function saveStory(){
+  const title=document.getElementById('f-title').value.trim();
+  const date=document.getElementById('f-date').value;
+  const body=document.getElementById('f-body').value.trim();
+  const status=document.getElementById('f-status').value;
+  const sched=document.getElementById('f-scheduled').value;
+  const img=document.getElementById('f-image-data').value;
+  if(!title){showToast('Please add a title.',true);return;}
+  if(!date){showToast('Please add a date.',true);return;}
+  if(!body){showToast('Please add the story body.',true);return;}
+  let finalBody=body;
+  if(!body.includes('<p>')){finalBody=body.split(/\n\n+/).filter(p=>p.trim()).map(p=>`<p>${p.trim()}</p>`).join('');}
+  const editId=document.getElementById('edit-id').value;
+  const btn=document.getElementById('save-story-btn');
+  btn.disabled=true;btn.textContent='Saving…';setSaving(true);
+  try{
+    const {sha}=await loadFromGH();DB_SHA=sha;
+    if(editId){const i=DB.stories.findIndex(s=>s.id===editId);if(i>-1)DB.stories[i]={...DB.stories[i],title,date,body:finalBody,status,scheduledDate:sched,image:img};}
+    else{DB.stories.unshift({id:'s'+Date.now(),title,date,body:finalBody,status,scheduledDate:sched,likes:0,comments:[],image:img});}
+    const r=await saveToGH(DB,DB_SHA,(editId?'Update':'Add')+' story: '+title);
+    DB_SHA=r.content.sha;
+    closeStoryForm();renderDashboard();renderStoriesList();
+    showToast(editId?'✓ Story updated on GitHub!':'✓ Story saved to GitHub!');
+  }catch(e){showToast('Save failed: '+e.message,true);}
+  finally{setSaving(false);btn.disabled=false;btn.textContent='Save to GitHub';}
+}
+async function deleteStory(id){
+  if(!confirm('Delete this story? This cannot be undone.'))return;
+  setSaving(true);
+  try{
+    const {sha}=await loadFromGH();DB_SHA=sha;
+    DB.stories=DB.stories.filter(s=>s.id!==id);
+    const r=await saveToGH(DB,DB_SHA,'Delete story');DB_SHA=r.content.sha;
+    renderDashboard();renderStoriesList();showToast('Story deleted.');
+  }catch(e){showToast('Delete failed: '+e.message,true);}
+  finally{setSaving(false);}
+}
+function previewImage(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{document.getElementById('f-image-data').value=e.target.result;document.getElementById('img-preview').src=e.target.result;document.getElementById('img-preview').className='img-preview show';};
+  reader.readAsDataURL(file);
+}
+
+// ══ SONGS ═════════════════════════════════════════════════
+function renderSongsList(){
+  if(!DB)return;
+  document.getElementById('songs-list').innerHTML=DB.songs.length
+    ?DB.songs.map((g,i)=>`<div class="song-row"><div class="song-num-badge">0${i+1}</div><div><div class="song-row-title">${g.title}</div><div class="song-row-tag">${g.tag}</div></div><button class="icon-btn" onclick="editSong('${g.id}')">✏️</button><button class="icon-btn del" onclick="deleteSong('${g.id}')">🗑</button></div>`).join('')
+    :'<div class="empty">No songs yet.</div>';
+}
+function openSongForm(id){
+  document.getElementById('song-form-title').textContent=id?'Edit Song':'New Song';
+  document.getElementById('edit-song-id').value=id||'';
+  if(id){const g=DB.songs.find(x=>x.id===id);if(g){document.getElementById('g-title').value=g.title;document.getElementById('g-tag').value=g.tag;document.getElementById('g-desc').value=g.desc;}}
+  else{document.getElementById('g-title').value='';document.getElementById('g-tag').value='';document.getElementById('g-desc').value='';}
+  document.getElementById('song-form-overlay').classList.add('open');
+}
+function closeSongForm(){document.getElementById('song-form-overlay').classList.remove('open');}
+function editSong(id){openSongForm(id);}
+async function saveSong(){
+  const title=document.getElementById('g-title').value.trim();
+  const tag=document.getElementById('g-tag').value.trim();
+  const desc=document.getElementById('g-desc').value.trim();
+  if(!title){showToast('Please add a title.',true);return;}
+  const editId=document.getElementById('edit-song-id').value;
+  const btn=document.getElementById('save-song-btn');
+  btn.disabled=true;btn.textContent='Saving…';setSaving(true);
+  try{
+    const {sha}=await loadFromGH();DB_SHA=sha;
+    if(editId){const i=DB.songs.findIndex(g=>g.id===editId);if(i>-1)DB.songs[i]={...DB.songs[i],title,tag,desc};}
+    else{DB.songs.push({id:'g'+Date.now(),title,tag,desc});}
+    const r=await saveToGH(DB,DB_SHA,(editId?'Update':'Add')+' song: '+title);DB_SHA=r.content.sha;
+    closeSongForm();renderSongsList();showToast(editId?'✓ Song updated on GitHub!':'✓ Song saved to GitHub!');
+  }catch(e){showToast('Save failed: '+e.message,true);}
+  finally{setSaving(false);btn.disabled=false;btn.textContent='Save to GitHub';}
+}
+async function deleteSong(id){
+  if(!confirm('Delete this song?'))return;
+  setSaving(true);
+  try{
+    const {sha}=await loadFromGH();DB_SHA=sha;
+    DB.songs=DB.songs.filter(g=>g.id!==id);
+    const r=await saveToGH(DB,DB_SHA,'Delete song');DB_SHA=r.content.sha;
+    renderSongsList();showToast('Song deleted.');
+  }catch(e){showToast('Delete failed: '+e.message,true);}
+  finally{setSaving(false);}
+}
+
+// ══ TOAST ═════════════════════════════════════════════════
+function showToast(msg,isError=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(isError?' error':'');
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ══ BOOT ══════════════════════════════════════════════════
+(function boot(){
+  const cfg=getCfg();
+  if(!cfg.user||!cfg.repo||!cfg.token||!cfg.pw){document.getElementById('setup-screen').style.display='flex';return;}
+  if(sessionStorage.getItem('saanjh_admin')==='1'){document.getElementById('app').style.display='block';initApp();return;}
+  document.getElementById('login-screen').style.display='flex';
+})();
+</script>
+</body>
+</html>
